@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Image Classification</h1>
+        
+        <!-- Form for uploading an image -->
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" id="file-input" name="file">
+            <button type="submit">Upload</button>
+        </form>
+        
+        <!-- Container for displaying result and uploaded image -->
+        <div id="result-container">
+            <div id="result"></div>
+            <div id="image-preview-container">
+                <img id="image-preview" src="" alt="Uploaded Image">
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('file-input').files[0]);
+            
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            document.getElementById('result').innerText = `Prediction: ${result.prediction}`;
+            
+            // Display uploaded image
+            const imagePreview = document.getElementById('image-preview');
+            imagePreview.src = URL.createObjectURL(document.getElementById('file-input').files[0]);
+        });
+    </script>
+</body>
+</html>
